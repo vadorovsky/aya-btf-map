@@ -1,5 +1,5 @@
 [package]
-name = "aya-ebpf-btf-map"
+name = "aya-ebpf-btf-map-macros"
 version = "0.1.0"
 edition = "2021"
 
