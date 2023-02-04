@@ -64,20 +64,25 @@ fn name_arg(args: &mut Args) -> Result<Option<String>> {
 
 pub struct BtfMap {
     item: ItemStatic,
-    name: String,
+    var_name: Ident,
+    map_name: String,
 }
 
 impl BtfMap {
     pub fn from_syn(mut args: Args, item: ItemStatic) -> Result<BtfMap> {
-        let name = name_arg(&mut args)?.unwrap_or_else(|| item.ident.to_string());
-        Ok(BtfMap { item, name })
+        let var_name = item.ident.clone();
+        let map_name = name_arg(&mut args)?.unwrap_or_else(|| var_name.to_string());
+        Ok(BtfMap {
+            item,
+            var_name,
+            map_name,
+        })
     }
 
     pub fn expand(&self) -> Result<TokenStream> {
-        let name = &self.name;
-        let struct_name = Ident::new(&format!("_anon_{}", name), Span::call_site());
-
-        let name_str = LitStr::new(&name, Span::call_site());
+        let var_name = &self.var_name;
+        let map_name = LitStr::new(&self.map_name, Span::call_site());
+        let struct_name = Ident::new(&format!("_anon_{}", self.map_name), Span::call_site());
 
         // TODO: use proper values
         let map_type = 1;
@@ -94,8 +99,8 @@ impl BtfMap {
             }
 
             #[link_section = ".maps"]
-            #[export_name = #name_str]
-            pub static mut #name: #struct_name = #struct_name {
+            #[export_name = #map_name]
+            pub static mut #var_name: #struct_name = #struct_name {
                 r#type: &[0i32; #map_type as usize] as *const [i32; #map_type as usize],
                 key: ::core::ptr::null(),
                 value: ::core::ptr::null(),
