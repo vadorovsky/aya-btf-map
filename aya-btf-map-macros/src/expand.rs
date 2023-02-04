@@ -102,8 +102,8 @@ impl BtfMap {
             #[export_name = #map_name]
             pub static mut #var_name: #struct_name = #struct_name {
                 r#type: &[0i32; #map_type as usize] as *const [i32; #map_type as usize],
-                key: ::core::ptr::null(),
-                value: ::core::ptr::null(),
+                // key: ::core::ptr::null(),
+                // value: ::core::ptr::null(),
                 max_entries: &[0i32; #max_entries as usize] as *const [i32; #max_entries as usize],
                 map_flags: &[0i32; #map_flags as usize] as *const [i32; #map_flags as usize],
             };
