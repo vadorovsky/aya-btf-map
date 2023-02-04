@@ -1,2 +1,2 @@
 [workspace]
-members = ["aya-ebpf-btf-map-macros"]
+members = ["aya-btf-map-macros"]
