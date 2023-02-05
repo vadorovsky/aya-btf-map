@@ -118,3 +118,11 @@ aya-bpf = { git = "https://github.com/aya-rs/aya", branch = "main" }
 [...]
 aya-btf-map = { git = "https://github.com/vadorovsky/aya-btf-map", branch = "main" }
 ```
+
+## Screenshots
+
+![aya-btf-maps](https://raw.githubusercontent.com/vadorovsky/aya-btf-map/main/assets/aya-btf-map.png)
+
+![btf-dump](https://raw.githubusercontent.com/vadorovsky/aya-btf-map/main/assets/btf-dump.png)
+
+![objdump](https://raw.githubusercontent.com/vadorovsky/aya-btf-map/main/assets/objdump.png)
