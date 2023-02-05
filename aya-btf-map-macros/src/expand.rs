@@ -1,4 +1,4 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
     parse::{Parse, ParseStream},
@@ -64,49 +64,22 @@ fn name_arg(args: &mut Args) -> Result<Option<String>> {
 
 pub struct BtfMap {
     item: ItemStatic,
-    var_name: Ident,
-    map_name: String,
+    name: String,
 }
 
 impl BtfMap {
     pub fn from_syn(mut args: Args, item: ItemStatic) -> Result<BtfMap> {
-        let var_name = item.ident.clone();
-        let map_name = name_arg(&mut args)?.unwrap_or_else(|| var_name.to_string());
-        Ok(BtfMap {
-            item,
-            var_name,
-            map_name,
-        })
+        let name = name_arg(&mut args)?.unwrap_or_else(|| item.ident.to_string());
+        Ok(BtfMap { item, name })
     }
 
     pub fn expand(&self) -> Result<TokenStream> {
-        let var_name = &self.var_name;
-        let map_name = LitStr::new(&self.map_name, Span::call_site());
-        let struct_name = Ident::new(&format!("_anon_{}", self.map_name), Span::call_site());
-
-        // TODO: use proper values
-        let map_type = 1;
-        let max_entries = 1024;
-        let map_flags = 0;
-
+        let name = &self.name;
+        let item = &self.item;
         Ok(quote! {
-            pub struct #struct_name {
-                pub r#type: *const [i32; #map_type as usize],
-                // pub key: *const #key_type,
-                // pub value: *const #value_type,
-                pub max_entries: *const [i32; #max_entries as usize],
-                pub map_flags: *const [i32; #map_flags as usize],
-            }
-
             #[link_section = ".maps"]
-            #[export_name = #map_name]
-            pub static mut #var_name: #struct_name = #struct_name {
-                r#type: &[0i32; #map_type as usize] as *const [i32; #map_type as usize],
-                // key: ::core::ptr::null(),
-                // value: ::core::ptr::null(),
-                max_entries: &[0i32; #max_entries as usize] as *const [i32; #max_entries as usize],
-                map_flags: &[0i32; #map_flags as usize] as *const [i32; #map_flags as usize],
-            };
+            #[export_name = #name]
+            #item
         })
     }
 }
